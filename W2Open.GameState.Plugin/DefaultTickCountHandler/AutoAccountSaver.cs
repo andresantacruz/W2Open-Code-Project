@@ -31,7 +31,9 @@ namespace W2Open.GameState.Plugin.DefaultTickCountHandler
                 {
                     if (gs.Players[i]?.State == EPlayerState.AT_WORLD)
                     {
-                        if (AccountCRUD.TrySaveAccount(gs.Players[i].AccountData.Value) != AccountCRUD.EResult.NO_ERROR)
+                        var account = gs.Players[i].AccountData.Value;
+
+                        if (AccountCRUD.TrySaveAccount(ref account) != AccountCRUD.EResult.NO_ERROR)
                         {
                             // TODO: the account could not be saved for some reason.
                             // Do something...

@@ -34,50 +34,77 @@ namespace W2Open.GameState.Plugin.DefaultPlayerRequestHandler
                     MAccountFile? nAccFile;
                     AccountCRUD.EResult accErr = AccountCRUD.TryRead(packet.AccName, out nAccFile);
 
-                    if (accErr == AccountCRUD.EResult.NO_ERROR)
+                    if (accErr != AccountCRUD.EResult.NO_ERROR)
                     {
-                        MLoginSuccessfulPacket answer =
-                            W2Marshal.GetEmptyValid<MLoginSuccessfulPacket>(MLoginSuccessfulPacket.Opcode);
-
-                        MAccountFile accFile = nAccFile.Value;
-
-                        answer.AccName = accFile.Info.LoginInfo.AccName;
-                        answer.Cargo = accFile.Cargo;
-                        answer.CargoCoin = accFile.CargoCoin;
-
-                        for (int i = 0; i < GameBasics.MAXL_ACC_MOB; i++)
+                        // if account doesn't exist...
+                        if(accErr == AccountCRUD.EResult.ACC_NOT_FOUND)
                         {
-                            unsafe
+                            // create a new account file
+                            MAccountFile newAccFile = W2Marshal.CreateEmpty<MAccountFile>();
+                            // set the username & password
+                            newAccFile.Info.LoginInfo.AccName = packet.AccName;
+                            newAccFile.Info.LoginInfo.Password = packet.Password;
+
+                            AccountCRUD.EResult createAccErr = AccountCRUD.TrySaveAccount(ref newAccFile);
+
+                            if(createAccErr == AccountCRUD.EResult.NO_ERROR)
                             {
-                                answer.SelChar.Coin[i] = accFile.MobCore[i].Coin;
-                                answer.SelChar.Equip[i] = accFile.MobCore[i].Equip;
-                                answer.SelChar.Exp[i] = accFile.MobCore[i].Exp;
-                                answer.SelChar.Guild[i] = accFile.MobCore[i].Guild;
-                                answer.SelChar.Name[i] = accFile.MobCore[i].Name;
-                                answer.SelChar.Score[i] = accFile.MobCore[i].BaseScore;
-                                answer.SelChar.SPosX[i] = accFile.MobCore[i].StellarGemPosition.X;
-                                answer.SelChar.SPosY[i] = accFile.MobCore[i].StellarGemPosition.Y;
+                                accErr = AccountCRUD.TryRead(packet.AccName, out nAccFile);
+
+                                if (accErr != AccountCRUD.EResult.NO_ERROR)
+                                    return EPlayerRequestResult.UNKNOWN;
+                            }
+                            else if (createAccErr == AccountCRUD.EResult.ACC_NOT_SAVED)
+                            {
+                                MTextMessagePacket createFailedAnswer =
+                                    W2Marshal.GetEmptyValid<MTextMessagePacket>(MTextMessagePacket.Opcode);
+
+                                createFailedAnswer.Message = "Não foi possível criar a conta.";
+
+                                player.SendPacket(createFailedAnswer);
+
+                                return EPlayerRequestResult.NO_ERROR;
+                            }
+                            else if (createAccErr == AccountCRUD.EResult.UNKNOWN)
+                            {
+                                return EPlayerRequestResult.UNKNOWN;
                             }
                         }
-
-                        player.SendPacket(answer);
-
-                        player.State = EPlayerState.SEL_CHAR;
+                        else
+                        {
+                            return EPlayerRequestResult.UNKNOWN;
+                        }
                     }
-                    else if (accErr == AccountCRUD.EResult.ACC_NOT_FOUND)
+
+                    MLoginSuccessfulPacket answer =
+                        W2Marshal.GetEmptyValid<MLoginSuccessfulPacket>(MLoginSuccessfulPacket.Opcode);
+
+                    MAccountFile accFile = nAccFile.Value;
+
+                    answer.AccName = accFile.Info.LoginInfo.AccName;
+                    answer.Cargo = accFile.Cargo;
+                    answer.CargoCoin = accFile.CargoCoin;
+
+                    for (int i = 0; i < GameBasics.MAXL_ACC_MOB; i++)
                     {
-                        MTextMessagePacket answer =
-                            W2Marshal.GetEmptyValid<MTextMessagePacket>(MTextMessagePacket.Opcode);
-
-                        answer.Message = "Esta conta não foi encontrada.";
-
-                        player.SendPacket(answer);
+                        unsafe
+                        {
+                            answer.SelChar.Coin[i] = accFile.MobCore[i].Coin;
+                            answer.SelChar.Equip[i] = accFile.MobCore[i].Equip;
+                            answer.SelChar.Exp[i] = accFile.MobCore[i].Exp;
+                            answer.SelChar.Guild[i] = accFile.MobCore[i].Guild;
+                            answer.SelChar.Name[i] = accFile.MobCore[i].Name;
+                            answer.SelChar.Score[i] = accFile.MobCore[i].BaseScore;
+                            answer.SelChar.SPosX[i] = accFile.MobCore[i].StellarGemPosition.X;
+                            answer.SelChar.SPosY[i] = accFile.MobCore[i].StellarGemPosition.Y;
+                        }
                     }
-                    else
-                    {
-                        return EPlayerRequestResult.UNKNOWN;
-                    }
 
+                    player.SendPacket(answer);
+
+                    player.State = EPlayerState.SEL_CHAR;
+                
+                    
                     return EPlayerRequestResult.NO_ERROR;
                 }
 

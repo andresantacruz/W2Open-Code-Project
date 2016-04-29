@@ -55,11 +55,28 @@ namespace W2Open.DataServer
             return err;
         }
 
-        public static EResult TrySaveAccount(MAccountFile acc)
+        public static EResult TrySaveAccount(ref MAccountFile acc)
         {
-            // TODO: save the account.
+            var err = EResult.NO_ERROR;
 
-            return EResult.NO_ERROR;
+            try
+            {
+                byte[] accBytes = W2Marshal.GetBytes(acc);
+
+                File.WriteAllBytes(String.Format("{0}/{1}/{2}.bin",
+                    PersistencyBasics.DB_ROOT_PATH, acc.Info.LoginInfo.AccName.Substring(0, 1).ToUpper(),
+                    acc.Info.LoginInfo.AccName), accBytes);
+            }
+            catch(DirectoryNotFoundException)
+            {
+                err = EResult.ACC_NOT_SAVED;
+            }
+            catch(Exception)
+            {
+                err = EResult.UNKNOWN;
+            }
+
+            return err;
         }
     }
 }
