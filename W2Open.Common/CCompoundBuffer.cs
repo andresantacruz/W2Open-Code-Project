@@ -1,4 +1,4 @@
-﻿namespace W2Open.Common.Utility
+﻿namespace W2Open.Common
 {
     /// <summary>
     /// The implementation of a compounded raw byte buffer.
@@ -38,27 +38,6 @@
         {
             RawBuffer = new byte[bufferLength];
             Offset = initialOffset;
-        }
-
-        public unsafe short ReadNextShort(int adtOffset = 0)
-        {
-            fixed(byte* b = RawBuffer)
-            {
-                return *(short*)&b[(Offset + adtOffset).Clamp(0, RawBuffer.Length)];
-            }
-        }
-
-        public ushort ReadNextUShort(int adtOffset = 0)
-        {
-            return (ushort)ReadNextShort(adtOffset);
-        }
-
-        public unsafe int ReadNextInt(int adtOffset = 0)
-        {
-            fixed(byte* b = RawBuffer)
-            {
-                return *(int*)&b[(Offset + adtOffset).Clamp(0, RawBuffer.Length)];
-            }
         }
     }
 }

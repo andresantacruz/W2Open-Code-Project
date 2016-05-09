@@ -1,4 +1,4 @@
-﻿using W2Open.Common.GameStructure;
+﻿using W2Open.Common.Game.v752;
 
 namespace W2Open.Common.Utility
 {
@@ -10,7 +10,7 @@ namespace W2Open.Common.Utility
         /// <summary>
         /// The keys used in the enc/dec process.
         /// </summary>
-        private static byte[] keyTable = new byte[512]
+        private static byte[] m_KeyTable = new byte[512]
         {
 	        #region Keys
 	        0x84, 0x87, 0x37, 0xD7, 0xEA, 0x79, 0x91, 0x7D, 0x4B, 0x4B, 0x85, 0x7D, 0x87, 0x81, 0x91, 0x7C, 0x0F, 0x73, 0x91, 0x91, 0x87, 0x7D, 0x0D, 0x7D, 0x86, 0x8F, 0x73, 0x0F, 0xE1, 0xDD,
@@ -40,61 +40,66 @@ namespace W2Open.Common.Utility
         /// <param name="pBuffer">Pointer to the packet buffer.</param>
         /// <param name="offset">Offset where the packet starts in the buffer.</param>
         /// <returns>If the decryption succeeds.</returns>
-        public static unsafe bool Decrypt(byte[] pBuffer, int offset = 0)
+        public static unsafe bool Decrypt(byte* pBuffer, int offset = 0)
         {
-            fixed (byte* pBufferPin = pBuffer)
+            uint keyIncrement = m_KeyTable[(pBuffer[2 + offset] * 2)];
+            uint keyResult = 0;
+            byte checksumEnc = 0;
+            byte checksumDec = 0;
+            bool sucessfull = true;
+
+            for (int i = 4, thisIterator = 0; i < *(ushort*)&pBuffer[offset];
+                 i++, keyIncrement++)
             {
-                uint keyIncrement = keyTable[(pBufferPin[2 + offset] * 2)];
-                uint keyResult = 0;
-                byte checksumEnc = 0;
-                byte checksumDec = 0;
-                bool sucessfull = true;
+                checksumEnc += pBuffer[i + offset];
 
-                for (int i = 4, thisIterator = 0; i < *(ushort*)&pBufferPin[offset];
-                     i++, keyIncrement++)
+                keyResult = m_KeyTable[((keyIncrement & 0x800000FF) * 2) + 1];
+
+                thisIterator = i & 3;
+
+                switch (thisIterator)
                 {
-                    checksumEnc += pBufferPin[i + offset];
+                    case 0:
+                    pBuffer[i + offset] -= (byte)(keyResult << 1);
+                    break;
 
-                    keyResult = keyTable[((keyIncrement & 0x800000FF) * 2) + 1];
+                    case 1:
+                    pBuffer[i + offset] += (byte)((int)(keyResult) >> 3);
+                    break;
 
-                    thisIterator = i & 3;
+                    case 2:
+                    pBuffer[i + offset] -= (byte)(keyResult << 2);
+                    break;
 
-                    switch (thisIterator)
-                    {
-                        case 0:
-                            pBufferPin[i + offset] -= (byte)(keyResult << 1);
-                            break;
-
-                        case 1:
-                            pBufferPin[i + offset] += (byte)((int)(keyResult) >> 3);
-                            break;
-
-                        case 2:
-                            pBufferPin[i + offset] -= (byte)(keyResult << 2);
-                            break;
-
-                        case 3:
-                            pBufferPin[i + offset] += (byte)((int)keyResult >> 5);
-                            break;
-                    }
-
-                    checksumDec += pBufferPin[i + offset];
+                    case 3:
+                    pBuffer[i + offset] += (byte)((int)keyResult >> 5);
+                    break;
                 }
 
-                // Do checksum
-                if (pBufferPin[3 + offset] != (byte)(checksumEnc - checksumDec)) // Old checksum
-                                                                                 //if (pBufferPin[3 + offset] != (byte)(checksumDec))
-                {
-                    sucessfull = false;
-                }
-
-                return sucessfull;
+                checksumDec += pBuffer[i + offset];
             }
+
+            // Do checksum
+            //if (pBufferPin[3 + offset] != (byte)(checksumDec))
+            if (pBuffer[3 + offset] != (byte)(checksumEnc - checksumDec)) // Old checksum
+            {
+                sucessfull = false;
+            }
+
+            return sucessfull;
         }
 
-        public static bool Decrypt(CCompoundBuffer buffer)
+        /// <summary>
+        /// Decrypts the packet data.
+        /// </summary>
+        /// <param name="buffer">The buffer to be decrypted.</param>
+        /// <returns>If the decryption succeeds.</returns>
+        public static unsafe bool Decrypt(CCompoundBuffer buffer)
         {
-            return Decrypt(buffer.RawBuffer, buffer.Offset);
+            fixed(byte* b = buffer.RawBuffer)
+            {
+                return Decrypt(&b[buffer.Offset]);
+            }
         }
 
         /// <summary>
@@ -102,56 +107,60 @@ namespace W2Open.Common.Utility
         /// </summary>
         /// <param name="pBuffer">Pointer to the packet buffer.</param>
         /// <param name="offset">Offset where the packet starts in the buffer.</param>
-        public static unsafe void Encrypt(byte[] pBuffer, int offset = 0)
+        public static unsafe void Encrypt(byte* pBuffer, int offset = 0)
         {
-            fixed (byte* pBufferPin = pBuffer)
+            byte checksumEnc = 0;
+            byte checksumDec = 0;
+            byte keyResult = 0;
+
+            BPacketHeader* pHeader = (BPacketHeader*)&pBuffer[offset];
+
+            uint keyIncrement = (uint)(m_KeyTable[pHeader->Key * 2] & 0xFF);
+
+            for (uint i = 4, loopIterator = 0; i < pHeader->Size; i++, keyIncrement++)
             {
-                byte checksumEnc = 0;
-                byte checksumDec = 0;
-                byte keyResult = 0;
+                checksumDec += pBuffer[offset + i];
 
-                MPacketHeader* pHeader = (MPacketHeader*)pBufferPin;
+                keyResult = m_KeyTable[((keyIncrement & 0x800000FF) * 2) + 1];
 
-                uint keyIncrement = (uint)(keyTable[pHeader->Key * 2] & 0xFF);
+                loopIterator = i & 3;
 
-                for (uint i = 4, loopIterator = 0; i < pHeader->Size; i++, keyIncrement++)
+                switch (loopIterator)
                 {
-                    checksumDec += pBufferPin[offset + i];
+                    case 0:
+                    pBuffer[offset + i] += (byte)(keyResult * 2);
+                    break;
 
-                    keyResult = keyTable[((keyIncrement & 0x800000FF) * 2) + 1];
+                    case 1:
+                    pBuffer[offset + i] -= (byte)((int)keyResult >> 3);
+                    break;
 
-                    loopIterator = i & 3;
+                    case 2:
+                    pBuffer[offset + i] += (byte)(keyResult * 4);
+                    break;
 
-                    switch (loopIterator)
-                    {
-                        case 0:
-                            pBufferPin[offset + i] += (byte)(keyResult * 2);
-                            break;
-
-                        case 1:
-                            pBufferPin[offset + i] -= (byte)((int)keyResult >> 3);
-                            break;
-
-                        case 2:
-                            pBufferPin[offset + i] += (byte)(keyResult * 4);
-                            break;
-
-                        case 3:
-                            pBufferPin[offset + i] -= (byte)((int)keyResult >> 5);
-                            break;
-                    }
-
-                    checksumEnc += pBufferPin[offset + i];
+                    case 3:
+                    pBuffer[offset + i] -= (byte)((int)keyResult >> 5);
+                    break;
                 }
 
-                //pBufferPin[offset + 3] = (byte)(checksumDec); // Fixed checksum
-                pHeader->CheckSum = (byte)(checksumEnc - checksumDec); // Old checksum
+                checksumEnc += pBuffer[offset + i];
             }
+
+            //pBufferPin[offset + 3] = (byte)(checksumDec); // Fixed checksum
+            pHeader->CheckSum = (byte)(checksumEnc - checksumDec); // Old checksum
         }
 
-        public static void Encrypt(CCompoundBuffer buffer)
+        /// <summary>
+        /// Encrypts the packet data and initialize the packet header.
+        /// </summary>
+        /// <param name="buffer">The buffer to be encrypted.</param>
+        public static unsafe void Encrypt(CCompoundBuffer buffer)
         {
-            Encrypt(buffer.RawBuffer, buffer.Offset);
+            fixed(byte* b = buffer.RawBuffer)
+            {
+                Encrypt(&b[buffer.Offset]);
+            }
         }
     }
 }

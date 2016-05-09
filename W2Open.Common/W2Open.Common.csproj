@@ -43,30 +43,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameBasics.cs" />
-    <Compile Include="GameStructure\MAccountFile.cs" />
-    <Compile Include="GameStructure\MAccountInfo.cs" />
-    <Compile Include="GameStructure\MAffect.cs" />
-    <Compile Include="GameStructure\MGeometry.cs" />
-    <Compile Include="GameStructure\MItem.cs" />
-    <Compile Include="GameStructure\MMobCore.cs" />
-    <Compile Include="GameStructure\MMobExtra.cs" />
-    <Compile Include="GameStructure\MPacketHeader.cs" />
-    <Compile Include="GameStructure\MScore.cs" />
-    <Compile Include="GameStructure\MSelChar.cs" />
-    <Compile Include="IncomingPacketStructure\MAccountLoginPacket.cs" />
-    <Compile Include="IncomingPacketStructure\MPingPacket.cs" />
+    <Compile Include="CBoundedString.cs" />
+    <Compile Include="Game\v752\BAffect.cs" />
+    <Compile Include="Game\v752\BPosition.cs" />
+    <Compile Include="Game\v752\UItem.cs" />
+    <Compile Include="Game\CMob.cs" />
+    <Compile Include="Game\v752\BPacketHeader.cs" />
+    <Compile Include="Game\v752\BMobScore.cs" />
+    <Compile Include="IUnmanagedReader.cs" />
+    <Compile Include="IUnmanagedWriter.cs" />
     <Compile Include="NetworkBasics.cs" />
-    <Compile Include="OutgoingPacketStructure\MLoginSuccessfulPacket.cs" />
-    <Compile Include="OutgoingPacketStructure\MTextMessagePacket.cs" />
     <Compile Include="ProjectBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\CCompoundBuffer.cs" />
-    <Compile Include="Utility\W2GenericExtensionMethods.cs" />
+    <Compile Include="Game\v752\UMobBase.cs" />
+    <Compile Include="Game\v752\UMobExtra.cs" />
+    <Compile Include="CCompoundBuffer.cs" />
+    <Compile Include="Utility\W2GenericExt.cs" />
     <Compile Include="Utility\W2Log.cs" />
-    <Compile Include="Utility\W2Marshal.cs" />
     <Compile Include="Utility\W2Random.cs" />
-    <Compile Include="Utility\PacketSecurity.cs" />
+    <Compile Include="PacketSecurity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

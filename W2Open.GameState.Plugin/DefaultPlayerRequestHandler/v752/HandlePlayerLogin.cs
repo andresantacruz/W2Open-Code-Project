@@ -32,9 +32,9 @@ namespace W2Open.GameState.Plugin.DefaultPlayerRequestHandler
                     MAccountLoginPacket packet = W2Marshal.GetStructure<MAccountLoginPacket>(player.RecvPacket);
 
                     MAccountFile? nAccFile;
-                    AccountCRUD.EResult accErr = AccountCRUD.TryRead(packet.AccName, out nAccFile);
+                    PlayerAccountCRUD.EResult accErr = PlayerAccountCRUD.TryRead(packet.AccName, out nAccFile);
 
-                    if (accErr == AccountCRUD.EResult.NO_ERROR)
+                    if (accErr == PlayerAccountCRUD.EResult.NO_ERROR)
                     {
                         MLoginSuccessfulPacket answer =
                             W2Marshal.GetEmptyValid<MLoginSuccessfulPacket>(MLoginSuccessfulPacket.Opcode);
@@ -64,7 +64,7 @@ namespace W2Open.GameState.Plugin.DefaultPlayerRequestHandler
 
                         player.State = EPlayerState.SEL_CHAR;
                     }
-                    else if (accErr == AccountCRUD.EResult.ACC_NOT_FOUND)
+                    else if (accErr == PlayerAccountCRUD.EResult.ACC_NOT_FOUND)
                     {
                         MTextMessagePacket answer =
                             W2Marshal.GetEmptyValid<MTextMessagePacket>(MTextMessagePacket.Opcode);

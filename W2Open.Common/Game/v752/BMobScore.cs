@@ -1,12 +1,12 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace W2Open.Common.GameStructure
+namespace W2Open.Common.Game.v752
 {
     /// <summary>
     /// Represents a set of information regard to a mob's status.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MScore
+    public struct BMobScore
     {
         public int Level;
 
@@ -16,11 +16,6 @@ namespace W2Open.Common.GameStructure
         public byte Merchant; // TODO: unknown type!
 
         private byte m_MovementSpeed;
-        public byte MovementSpeed
-        {
-            get { return m_MovementSpeed; }
-            set { m_MovementSpeed = (value > GameBasics.MAX_MOB_SPEED) ? GameBasics.MAX_MOB_SPEED : value; }
-        }
 
         public byte Direction; // The direction the mob is facing.
         public byte ChaosRate; // TODO: unknown type!
@@ -34,7 +29,13 @@ namespace W2Open.Common.GameStructure
         public short Int;
         public short Dex;
         public short Con;
-        
+
         public unsafe fixed short Special[4]; // The 4 special points ("pontos de aprendizagem").
+
+        public byte MovementSpeed
+        {
+            get { return m_MovementSpeed; }
+            set { m_MovementSpeed = (value > CMob.MAX_MOVE_SPEED) ? (byte)CMob.MAX_MOVE_SPEED : value; }
+        }
     }
 }

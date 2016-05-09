@@ -5,7 +5,7 @@ using W2Open.Common.Utility;
 
 namespace W2Open.DataServer
 {
-    public static class AccountCRUD
+    public static class PlayerAccountCRUD
     {
         public enum EResult
         {

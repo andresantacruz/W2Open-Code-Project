@@ -20,6 +20,7 @@ namespace W2Open.Common.Utility
     /// Events:
     ///     <see cref="DidLog"/>
     /// </summary>
+    [Obsolete]
     public static class W2Log
     {
         /// <summary>

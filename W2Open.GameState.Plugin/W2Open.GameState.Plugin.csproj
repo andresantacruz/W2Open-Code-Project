@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultPlayerRequestHandler\HandlePlayerLogin.cs" />
+    <Compile Include="DefaultPlayerRequestHandler\v752\HandlePlayerLogin.cs" />
     <Compile Include="DefaultTickCountHandler\AutoAccountSaver.cs" />
     <Compile Include="IGameStatePlugin.cs" />
     <Compile Include="PluginController.cs" />
