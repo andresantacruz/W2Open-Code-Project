@@ -34,6 +34,12 @@
             }
         }
 
+        public CCompoundBuffer(byte[] rawBuffer, int initialOffset = 0)
+        {
+            RawBuffer = rawBuffer;
+            Offset = initialOffset;
+        }
+
         public CCompoundBuffer(int bufferLength, int initialOffset = 0)
         {
             RawBuffer = new byte[bufferLength];

@@ -15,9 +15,13 @@ namespace W2Open.GameState
          * Criar coisas como: MobGridMap, SpawnedMobs, etc.
          */
 
-        public CPlayer[] Players { get; set; }
-        private Timer m_Timer;
+        public static event DProcessPacket OnProcessPacket;
+        public static event DProcessSecTimer OnProcessSecTimer;
+
         public readonly DateTime SinceInit;
+        public CPlayer[] Players { get; set; }
+
+        private Timer m_Timer;
 
         public CGameStateController(ISynchronizeInvoke syncObj)
         {
@@ -30,6 +34,9 @@ namespace W2Open.GameState
             m_Timer.Elapsed += (sender, e) => OnProcessSecTimer?.Invoke(this);
             m_Timer.Start();
         }
+
+        public delegate EPlayerRequestResult DProcessPacket(CGameStateController gs, CPlayer player);
+        public delegate void DProcessSecTimer(CGameStateController gs);
 
         /// <summary>
         /// Insert the player in the game state. This method must be called when the player just stablishes a connection by sending the INIT_CODE to the server.
@@ -57,6 +64,7 @@ namespace W2Open.GameState
         ///     Throws any exceptions except the "GameStateException.Code == INVALID_PLAYER_INDEX".
         /// </summary>
         /// <param name="player"></param>
+        [Obsolete]
         public void DisconnectPlayer(CPlayer player)
         {
             if (player.State != EPlayerState.CLOSED)
@@ -91,13 +99,5 @@ namespace W2Open.GameState
 
             return result;
         }
-
-        #region Static fields
-        public static event DProcessPacket OnProcessPacket;
-        public static event DProcessSecTimer OnProcessSecTimer;
-        #endregion
-
-        public delegate EPlayerRequestResult DProcessPacket(CGameStateController gs, CPlayer player);
-        public delegate void DProcessSecTimer(CGameStateController gs);
     }
 }

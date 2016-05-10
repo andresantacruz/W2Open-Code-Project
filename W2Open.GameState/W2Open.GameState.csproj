@@ -43,13 +43,17 @@
   <ItemGroup>
     <Compile Include="CGameStateController.cs" />
     <Compile Include="CPlayer.cs" />
-    <Compile Include="ERequestResult.cs" />
+    <Compile Include="EPlayerRequestResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\W2Open.Common\W2Open.Common.csproj">
       <Project>{9e37305b-badd-49e4-842a-fc45b8ce0b95}</Project>
       <Name>W2Open.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W2Open.DataServer\W2Open.DataServer.csproj">
+      <Project>{5ca9998d-9362-417a-89fd-c7603c59bb46}</Project>
+      <Name>W2Open.DataServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
