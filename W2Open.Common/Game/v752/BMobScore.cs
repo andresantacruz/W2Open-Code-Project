@@ -30,12 +30,12 @@ namespace W2Open.Common.Game.v752
         public short Dex;
         public short Con;
 
-        public unsafe fixed short Special[4]; // The 4 special points ("pontos de aprendizagem").
+        public unsafe fixed short Special[W2Basics.MAXC_MOB_SPECIAL]; // The 4 special points ("pontos de aprendizagem").
 
         public byte MovementSpeed
         {
             get { return m_MovementSpeed; }
-            set { m_MovementSpeed = (value > UMob.MAX_MOVE_SPEED) ? (byte)UMob.MAX_MOVE_SPEED : value; }
+            set { m_MovementSpeed = (value > W2Basics.MAX_MOB_MOVE_SPEED) ? (byte)W2Basics.MAX_MOB_MOVE_SPEED : value; }
         }
     }
 }

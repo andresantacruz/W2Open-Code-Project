@@ -43,10 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\ItemCollections.cs" />
     <Compile Include="Game\v752\BAffect.cs" />
     <Compile Include="Game\v752\BPosition.cs" />
+    <Compile Include="Game\v752\W2Basics.cs" />
     <Compile Include="Game\v752\UItem.cs" />
-    <Compile Include="Game\CMob.cs" />
+    <Compile Include="Game\UMobComplete.cs" />
     <Compile Include="Game\v752\BPacketHeader.cs" />
     <Compile Include="Game\v752\BMobScore.cs" />
     <Compile Include="NetworkBasics.cs" />

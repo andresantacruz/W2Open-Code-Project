@@ -33,10 +33,16 @@ namespace W2Open.Common.Game.v752
     [StructLayout(LayoutKind.Explicit, Pack = ProjectBasics.DEFAULT_PACK, Size = 756)]
     public struct UMobBase
     {
-        public const int MAX_NAME_LENGTH = 16;
-
         [FieldOffset(0)]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_NAME_LENGTH)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = W2Basics.MAXL_MOB_NAME)]
         public String Name;
+
+        [Obsolete]
+        [FieldOffset(100)]
+        public UEquip Equip;
+
+        [Obsolete]
+        [FieldOffset(200)]
+        public UInventory Inventory;
     }
 }

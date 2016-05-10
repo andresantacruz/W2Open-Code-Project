@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CPlayerAccount.cs" />
+    <Compile Include="UPlayerAccount.cs" />
     <Compile Include="PlayerAccountCRUD.cs" />
     <Compile Include="PersistencyBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

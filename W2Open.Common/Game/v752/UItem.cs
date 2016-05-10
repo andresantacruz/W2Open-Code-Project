@@ -6,12 +6,10 @@ namespace W2Open.Common.Game.v752
 {
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK, Size = 8)]
     public struct UItem
-    {
-        public const int MAX_ITEM_EFFECT = 3;
-        
+    {        
         public short Index;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_ITEM_EFFECT)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = W2Basics.MAXC_ITEM_EFFECT)]
         private BEffect[] m_Effs;
 
         [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
