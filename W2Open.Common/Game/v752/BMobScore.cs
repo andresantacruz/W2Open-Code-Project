@@ -35,7 +35,7 @@ namespace W2Open.Common.Game.v752
         public byte MovementSpeed
         {
             get { return m_MovementSpeed; }
-            set { m_MovementSpeed = (value > CMob.MAX_MOVE_SPEED) ? (byte)CMob.MAX_MOVE_SPEED : value; }
+            set { m_MovementSpeed = (value > UMob.MAX_MOVE_SPEED) ? (byte)UMob.MAX_MOVE_SPEED : value; }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace W2Open.Common.Utility
     /// <summary>
     /// Implements the security protocol used in the game client.
     /// </summary>
-    public static class PacketSecurity
+    public static class W2PacketSecurity
     {
         /// <summary>
         /// The keys used in the enc/dec process.

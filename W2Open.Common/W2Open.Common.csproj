@@ -43,15 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CBoundedString.cs" />
     <Compile Include="Game\v752\BAffect.cs" />
     <Compile Include="Game\v752\BPosition.cs" />
     <Compile Include="Game\v752\UItem.cs" />
     <Compile Include="Game\CMob.cs" />
     <Compile Include="Game\v752\BPacketHeader.cs" />
     <Compile Include="Game\v752\BMobScore.cs" />
-    <Compile Include="IUnmanagedReader.cs" />
-    <Compile Include="IUnmanagedWriter.cs" />
     <Compile Include="NetworkBasics.cs" />
     <Compile Include="ProjectBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,8 +57,9 @@
     <Compile Include="CCompoundBuffer.cs" />
     <Compile Include="Utility\W2GenericExt.cs" />
     <Compile Include="Utility\W2Log.cs" />
+    <Compile Include="Utility\W2Marshal.cs" />
     <Compile Include="Utility\W2Random.cs" />
-    <Compile Include="PacketSecurity.cs" />
+    <Compile Include="W2PacketSecurity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

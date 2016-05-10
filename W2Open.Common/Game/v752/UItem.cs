@@ -1,36 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace W2Open.Common.Game.v752
 {
-    public class UItem : IUnmanagedReader, IUnmanagedWriter
+    [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK, Size = 8)]
+    public struct UItem
     {
-        public short Index;
+        public const int MAX_ITEM_EFFECT = 3;
         
-        private BEffect[] Effs;
+        public short Index;
 
-        public UItem()
-        {
-            Effs = new BEffect[3];
-        }
-
-        public int UnmanagedSize => 8;
-
-        public unsafe void ReadFromUnmanaged(byte* pointedBuffer)
-        {
-            Index = *(short*)&pointedBuffer[0];
-
-            for (int i = 0; i < Effs.Length; i++)
-                Effs[i] = *(BEffect*)&pointedBuffer[2 + sizeof(BEffect) * i];
-        }
-
-        public unsafe void WriteToUnmanaged(byte* pointedBuffer)
-        {
-            *(short*)&pointedBuffer[0] = Index;
-
-            for (int i = 0; i < Effs.Length; i++)
-                *(BEffect*)&pointedBuffer[2 + sizeof(BEffect) * i] = Effs[i];
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_ITEM_EFFECT)]
+        private BEffect[] m_Effs;
 
         [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
         public struct BEffect
@@ -40,33 +22,19 @@ namespace W2Open.Common.Game.v752
         }
     }
 
-    public abstract class ItemCollection : IUnmanagedReader, IUnmanagedWriter
+    public static class ItemHelper
     {
-        public UItem[] Items;
-
-        protected ItemCollection(int length)
+        public static List<int> FindItemsFromIndex(this UItem[] arr, int index)
         {
-            if(length < 1)
-                throw new ArgumentOutOfRangeException(nameof(length));
+            List<int> ids = new List<int>();
 
-            Items = new UItem[length];
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (arr[i].Index == index)
+                    ids.Add(i);
+            }
 
-            for (int i = 0; i < Items.Length; i++)
-                Items[i] = new UItem();
-        }
-
-        public int UnmanagedSize => Items[0].UnmanagedSize * Items.Length;
-
-        public unsafe void ReadFromUnmanaged(byte* pointedBuffer)
-        {
-            for (int i = 0; i < Items.Length; i++)
-                Items[i].ReadFromUnmanaged(&pointedBuffer[i * Items[0].UnmanagedSize]);
-        }
-
-        public unsafe void WriteToUnmanaged(byte* pointedBuffer)
-        {
-            for (int i = 0; i < Items.Length; i++)
-                Items[i].WriteToUnmanaged(&pointedBuffer[i * Items[0].UnmanagedSize]);
+            return ids;
         }
     }
 }

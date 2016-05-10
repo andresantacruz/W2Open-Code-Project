@@ -1,10 +1,59 @@
 ﻿using System;
 using System.IO;
-using W2Open.Common.GameStructure;
-using W2Open.Common.Utility;
+using W2Open.Common;
 
 namespace W2Open.DataServer
 {
+    /// <summary>
+    /// Used for test-purpose only.
+    /// </summary>
+    [Obsolete]
+    public class UPlayerAccountBinaryWrapper : IUnmanagedReader, IUnmanagedWriter
+    {
+        public CPlayerAccount PlayerAcc { get; set; }
+
+        public UPlayerAccountBinaryWrapper(CPlayerAccount playerAcc)
+        {
+            PlayerAcc = playerAcc;
+        }
+
+        public int UnmanagedSize
+        {
+            get
+            {
+                return (
+                    PlayerAcc.Login.UnmanagedSize +
+                    PlayerAcc.Password.UnmanagedSize +
+                    PlayerAcc.Cargo.UnmanagedSize
+                    );
+            }
+        }
+
+        public unsafe void ReadFromUnmanaged(byte* pointedBuffer)
+        {
+            PlayerAcc.Login.ReadFromUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Login.UnmanagedSize;
+
+            PlayerAcc.Password.ReadFromUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Password.UnmanagedSize;
+
+            PlayerAcc.Cargo.ReadFromUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Cargo.UnmanagedSize;
+        }
+
+        public unsafe void WriteToUnmanaged(byte* pointedBuffer)
+        {
+            PlayerAcc.Login.WriteToUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Login.UnmanagedSize;
+
+            PlayerAcc.Password.WriteToUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Password.UnmanagedSize;
+
+            PlayerAcc.Cargo.WriteToUnmanaged(pointedBuffer);
+            pointedBuffer += PlayerAcc.Cargo.UnmanagedSize;
+        }
+    }
+
     public static class PlayerAccountCRUD
     {
         public enum EResult
@@ -27,17 +76,24 @@ namespace W2Open.DataServer
             UNKNOWN,
         }
 
-        public static EResult TryRead(String accName, out MAccountFile? accFile)
+        public static unsafe EResult TryRead(String accName, out CPlayerAccount accFile)
         {
             EResult err = EResult.NO_ERROR;
             accFile = null;
-            
+
             try
             {
                 byte[] rawAcc = File.ReadAllBytes(String.Format("{0}/{1}/{2}.bin",
                     PersistencyBasics.DB_ROOT_PATH, accName.Substring(0, 1).ToUpper(), accName.ToUpper()));
 
-                accFile = W2Marshal.GetStructure<MAccountFile>(rawAcc);
+                UPlayerAccountBinaryWrapper accWrapper = new UPlayerAccountBinaryWrapper(new CPlayerAccount("", ""));
+                
+                fixed(byte* b = rawAcc)
+                {
+                    accWrapper.ReadFromUnmanaged(b);
+                }
+
+                accFile = accWrapper.PlayerAcc;
             }
             catch(FileNotFoundException)
             {
@@ -55,9 +111,20 @@ namespace W2Open.DataServer
             return err;
         }
 
-        public static EResult TrySaveAccount(MAccountFile acc)
+        public static unsafe EResult TrySaveAccount(CPlayerAccount acc)
         {
-            // TODO: save the account.
+            UPlayerAccountBinaryWrapper accWrapper = new UPlayerAccountBinaryWrapper(acc);
+
+            byte[] rawAcc = new byte[accWrapper.UnmanagedSize];
+
+            fixed(byte* b = rawAcc)
+            {
+                accWrapper.WriteToUnmanaged(b);
+            }
+
+            File.WriteAllBytes(String.Format("{0}/{1}/{2}.bin",
+                    PersistencyBasics.DB_ROOT_PATH, acc.Login.Value.Substring(0, 1).ToUpper(),
+                    acc.Login.Value.ToUpper()), rawAcc);
 
             return EResult.NO_ERROR;
         }

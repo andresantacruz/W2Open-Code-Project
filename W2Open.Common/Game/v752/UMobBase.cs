@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace W2Open.Common.Game.v752
 {
@@ -29,25 +30,13 @@ namespace W2Open.Common.Game.v752
     /// TODO: lacking fields.
     /// </summary>
     [Obsolete]
-    public class UMobBase : IUnmanagedReader, IUnmanagedWriter
+    [StructLayout(LayoutKind.Explicit, Pack = ProjectBasics.DEFAULT_PACK, Size = 756)]
+    public struct UMobBase
     {
-        public UBoundedString Name { get; set; }
+        public const int MAX_NAME_LENGTH = 16;
 
-        public UMobBase()
-        {
-            Name = new UBoundedString(16);
-        }
-
-        public int UnmanagedSize => 0;
-
-        public unsafe void ReadFromUnmanaged(byte* pointedBuffer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void WriteToUnmanaged(byte* pointedBuffer)
-        {
-            throw new NotImplementedException();
-        }
+        [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_NAME_LENGTH)]
+        public String Name;
     }
 }

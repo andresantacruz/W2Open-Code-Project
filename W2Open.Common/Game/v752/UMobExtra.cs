@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace W2Open.Common.Game.v752
 {
@@ -6,28 +7,10 @@ namespace W2Open.Common.Game.v752
     /// TODO: lacking fields.
     /// </summary>
     [Obsolete]
-    public class UMobExtra : IUnmanagedReader, IUnmanagedWriter
+    [StructLayout(LayoutKind.Explicit, Pack = ProjectBasics.DEFAULT_PACK, Size = 100)]
+    public unsafe struct UMobExtra
     {
-        public short ClassMaster { get; set; }
-
-        public UMobExtra()
-        {
-        }
-
-        public int UnmanagedSize => 0;
-
-        public unsafe void ReadFromUnmanaged(byte* pointedBuffer)
-        {
-            ClassMaster = *(short*)&pointedBuffer[0];
-        }
-
-        public unsafe void WriteToUnmanaged(byte* pointedBuffer)
-        {
-            // TODO: remove this zero-initalization loop after completing this method.
-            for (int i = 0; i < UnmanagedSize; i++)
-                pointedBuffer[i] = 0;
-
-            *(short*)&pointedBuffer[0] = ClassMaster;
-        }
+        [FieldOffset(0)]
+        public short ClassMaster;
     }
 }
