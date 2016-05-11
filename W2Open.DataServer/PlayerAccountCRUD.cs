@@ -39,22 +39,23 @@ namespace W2Open.DataServer
             return result;
         }
 
-        public static EResult TryRead(String login, String psw, ref UPlayerAccount accFile)
+        public static EResult TryRead(String login, String psw, out UPlayerAccount accFile)
         {
             EResult result = EResult.NO_ERROR;
+            accFile = new UPlayerAccount();
 
             try
             {
                 byte[] rawAcc = File.ReadAllBytes(String.Format("{0}/{1}/{2}.bin",
-                    PersistencyBasics.DB_ROOT_PATH, login.Substring(0, 1).ToUpper(), login.ToUpper()));
+                       PersistencyBasics.DB_ROOT_PATH, login.Substring(0, 1).ToUpper(), login.ToUpper()));
 
                 accFile = W2Marshal.GetStructure<UPlayerAccount>(rawAcc);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 result = ProcessSystemException(e);
             }
-            
+
             return result;
         }
 

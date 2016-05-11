@@ -94,7 +94,7 @@ namespace W2Open.Common.Utility
         /// </summary>
         /// <param name="buffer">The buffer to be decrypted.</param>
         /// <returns>If the decryption succeeds.</returns>
-        public static unsafe bool Decrypt(CCompoundBuffer buffer)
+        public static unsafe bool Decrypt(CRecvPacket buffer)
         {
             fixed(byte* b = buffer.RawBuffer)
             {
@@ -155,7 +155,7 @@ namespace W2Open.Common.Utility
         /// Encrypts the packet data and initialize the packet header.
         /// </summary>
         /// <param name="buffer">The buffer to be encrypted.</param>
-        public static unsafe void Encrypt(CCompoundBuffer buffer)
+        public static unsafe void Encrypt(CRecvPacket buffer)
         {
             fixed(byte* b = buffer.RawBuffer)
             {

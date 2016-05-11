@@ -46,6 +46,8 @@
     <Compile Include="Game\ItemCollections.cs" />
     <Compile Include="Game\v752\BAffect.cs" />
     <Compile Include="Game\v752\BPosition.cs" />
+    <Compile Include="Game\v752\Packets\UGameNoticePacket.cs" />
+    <Compile Include="Game\v752\Packets\ULoginRequestPacket.cs" />
     <Compile Include="Game\v752\W2Basics.cs" />
     <Compile Include="Game\v752\UItem.cs" />
     <Compile Include="Game\UMobComplete.cs" />
@@ -56,12 +58,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\v752\UMobBase.cs" />
     <Compile Include="Game\v752\UMobExtra.cs" />
-    <Compile Include="CCompoundBuffer.cs" />
     <Compile Include="Utility\W2GenericExt.cs" />
     <Compile Include="Utility\W2Log.cs" />
     <Compile Include="Utility\W2Marshal.cs" />
     <Compile Include="Utility\W2Random.cs" />
-    <Compile Include="W2PacketSecurity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

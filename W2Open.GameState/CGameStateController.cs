@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Timers;
 using W2Open.Common;
+using W2Open.Common.Game.v752;
 using W2Open.Common.Utility;
+using W2Open.DataServer;
 
 namespace W2Open.GameState
 {
@@ -15,17 +18,21 @@ namespace W2Open.GameState
          * Criar coisas como: MobGridMap, SpawnedMobs, etc.
          */
 
-        public static event DProcessPacket OnProcessPacket;
-        public static event DProcessSecTimer OnProcessSecTimer;
-
         public readonly DateTime SinceInit;
+
+        public CGameStatistics Statistics { get; private set; }
+
+        public CPlayerConnection[] PlayerConnections { get; set; }
         public CPlayer[] Players { get; set; }
 
         private Timer m_Timer;
 
         public CGameStateController(ISynchronizeInvoke syncObj)
         {
+            Statistics = new CGameStatistics();
+
             Players = new CPlayer[NetworkBasics.MAX_PLAYER];
+            PlayerConnections = new CPlayerConnection[NetworkBasics.MAX_PLAYER];
 
             SinceInit = DateTime.Now;
 
@@ -35,25 +42,35 @@ namespace W2Open.GameState
             m_Timer.Start();
         }
 
-        public delegate EPlayerRequestResult DProcessPacket(CGameStateController gs, CPlayer player);
+        public delegate EPlayerRequestResult DProcessPacket(CGameStateController gs, CPlayerConnection player);
         public delegate void DProcessSecTimer(CGameStateController gs);
+
+        public static event DProcessPacket OnProcessPacket;
+        public static event DProcessSecTimer OnProcessSecTimer;
 
         /// <summary>
         /// Insert the player in the game state. This method must be called when the player just stablishes a connection by sending the INIT_CODE to the server.
         /// </summary>
-        public bool TryInsertPlayer(CPlayer player)
+        public bool TryInsertPlayerConnection(CPlayerConnection player)
         {
+            Statistics.StablishedConnections++;
+
             short i;
             for (i = 1; i < NetworkBasics.MAX_PLAYER; i++)
             {
-                if (Players[i] == null || Players[i].State == EPlayerState.CLOSED)
+                if (PlayerConnections[i] == null || PlayerConnections[i].State == CPlayerConnection.EState.CLOSED)
                     break;
             }
 
             if (i >= NetworkBasics.MAX_PLAYER)
                 return false;
 
+            Statistics.ConnectedPlayers++;
+
+            PlayerConnections[i] = player;
             player.Index = i;
+
+            W2Log.Write($"New connection on id: {player.Index}. IPEP: {player.Tcp.Client.RemoteEndPoint}", ELogType.NETWORK);
 
             return true;
         }
@@ -65,16 +82,18 @@ namespace W2Open.GameState
         /// </summary>
         /// <param name="player"></param>
         [Obsolete]
-        public void DisconnectPlayer(CPlayer player)
+        public void DisconnectPlayer(CPlayerConnection player)
         {
-            if (player.State != EPlayerState.CLOSED)
+            if (player.State != CPlayerConnection.EState.CLOSED)
             {
                 // TODO: send the dced spawn in the visible area around the player.
                 // TODO: proceed removind the player of all the game state: mob grid, spawned mobs, etc.
 
-                player.State = EPlayerState.CLOSED;
+                Statistics.ConnectedPlayers--;
 
-                W2Log.Write($"The player {player.Index} was disconnected from the server.", ELogType.GAME_EVENT);
+                player.State = CPlayerConnection.EState.CLOSED;
+
+                W2Log.Write($"Connection {player.Index} was disconnected.", ELogType.NETWORK);
             }
         }
 
@@ -82,9 +101,15 @@ namespace W2Open.GameState
         /// Process the player requests.
         /// This method fires the <see cref="OnProcessPacket"/> event to be hooked up by plugins.
         /// </summary>
-        public EPlayerRequestResult ProcessPlayerRequest(CPlayer player)
+        public EPlayerRequestResult ProcessPlayerRequest(CPlayerConnection player)
         {
             EPlayerRequestResult result = EPlayerRequestResult.NO_ERROR;
+            Statistics.ReceivedPackets++;
+
+            BPacketHeader header = player.RecvPacket.Header;
+
+            W2Log.Write(String.Format("New recv packet ({3}) from connection {2} {{0x{0:X}/{1}}}.",
+                header.Opcode, header.Size, player.Index, Statistics.ReceivedPackets), ELogType.NETWORK);
 
             foreach (DProcessPacket target in OnProcessPacket.GetInvocationList())
             {

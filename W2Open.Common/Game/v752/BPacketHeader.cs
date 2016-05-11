@@ -17,5 +17,16 @@ namespace W2Open.Common.Game.v752
         public ushort ClientId;
 
         public uint TimeStamp;
+
+        public static BPacketHeader GetInitialized<T>(ushort opcode, ushort clientId) where T : struct
+        {
+            BPacketHeader header = new BPacketHeader();
+
+            header.Size = (ushort)Marshal.SizeOf(typeof(T));
+            header.Opcode = opcode;
+            header.ClientId = clientId;
+
+            return header;
+        }
     }
 }

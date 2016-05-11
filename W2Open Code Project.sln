@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W2Open.GameState", "W2Open.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W2Open.GameState.Plugin", "W2Open.GameState.Plugin\W2Open.GameState.Plugin.csproj", "{756C8536-C282-47F2-843F-C3334B5F619D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{65CCED62-C14B-41CF-881A-D80548E19B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W2Open.Tools.PlayerAccountEditor", "Tools\W2Open.Tools.PlayerAccountEditor\W2Open.Tools.PlayerAccountEditor.csproj", "{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,8 +43,15 @@ Global
 		{756C8536-C282-47F2-843F-C3334B5F619D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{756C8536-C282-47F2-843F-C3334B5F619D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{756C8536-C282-47F2-843F-C3334B5F619D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{08C95C2B-6E96-4EE8-9810-E44A4FD4CA28} = {65CCED62-C14B-41CF-881A-D80548E19B02}
 	EndGlobalSection
 EndGlobal

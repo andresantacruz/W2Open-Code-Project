@@ -28,8 +28,8 @@ namespace W2Open.GameState.Plugin
             Queue<IGameStatePlugin> defaultPlugins = new Queue<IGameStatePlugin>();
             Queue<IGameStatePlugin> otherPlugins = new Queue<IGameStatePlugin>();
 
-            String defaultPlayerRequestPluginNS = typeof(HandlePlayerLogin).Namespace;
-            String defaultTickCountPluginNS = typeof(AutoAccountSaver).Namespace;
+            String defaultPlayerRequestPluginNS = nameof(W2Open.GameState.Plugin.DefaultPlayerRequestHandler);
+            String defaultTickCountPluginNS = nameof(W2Open.GameState.Plugin.DefaultTickCountHandler);
 
             // Read all types in this assembly and enqueue them into default or other plugin queues.
             foreach (Type thisPlugin in pluginTypes)

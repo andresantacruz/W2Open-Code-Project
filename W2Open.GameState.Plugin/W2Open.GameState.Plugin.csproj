@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultPlayerRequestHandler\v752\HandlePlayerLogin.cs" />
-    <Compile Include="DefaultTickCountHandler\AutoAccountSaver.cs" />
+    <Compile Include="DefaultPlayerRequestHandler\PlayerLoginPacket.cs" />
+    <Compile Include="DefaultTickCountHandler\dummy.cs" />
     <Compile Include="IGameStatePlugin.cs" />
     <Compile Include="PluginController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +63,7 @@
       <Name>W2Open.GameState</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -5,7 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using W2Open.Common;
-using W2Open.Common.OutgoingPacketStructure;
+using W2Open.Common.Game.v752;
+using W2Open.Common.Game.v752.Packets;
 using W2Open.Common.Utility;
 using W2Open.GameState;
 using W2Open.GameState.Plugin;
@@ -68,19 +69,19 @@ namespace W2Open.Server
             using (client)
             using (NetworkStream stream = client.GetStream())
             {
-                CPlayer player = new CPlayer(stream);
-                CCompoundBuffer packet = player.RecvPacket;
+                CPlayerConnection playerConn = new CPlayerConnection(gameController, client);
+                CRecvPacket packet = playerConn.RecvPacket;
 
                 try
                 {
                     // Iterate processing incoming player packets until he disconnects.
-                    while (player.State != EPlayerState.CLOSED)
+                    while (playerConn.State != CPlayerConnection.EState.CLOSED)
                     {
                         int readCount = await stream.ReadAsync(packet.RawBuffer, 0, NetworkBasics.MAXL_PACKET);
 
                         if (readCount != 4 && (readCount < 12 || readCount > NetworkBasics.MAXL_PACKET)) // Invalid game packet.
                         {
-                            gameController.DisconnectPlayer(player);
+                            gameController.DisconnectPlayer(playerConn);
                             break;
                         }
                         else // Possible valid game packet chunk.
@@ -88,6 +89,7 @@ namespace W2Open.Server
                             unsafe
                             {
                                 packet.Offset = 0;
+
                                 fixed (byte* PinnedPacketChunk = &packet.RawBuffer[packet.Offset])
                                 {
                                     // Check for the init code.
@@ -95,11 +97,13 @@ namespace W2Open.Server
                                     {
                                         packet.Offset = 4;
 
+                                        playerConn.SendPacket(new UGameNoticePacket("tu e fera."));
+
                                         // If a valid index can't be assigned to the player, disconnect him 
-                                        if (!gameController.TryInsertPlayer(player))
+                                        if (!gameController.TryInsertPlayerConnection(playerConn))
                                         {
-                                            player.SendPacket(MTextMessagePacket.Create("O servidor está lotado. Tente novamente mais tarde."));
-                                            gameController.DisconnectPlayer(player);
+                                            playerConn.SendPacket(new UGameNoticePacket("O servidor está lotado.Tente novamente mais tarde."));
+                                            gameController.DisconnectPlayer(playerConn);
                                             continue;
                                         }
 
@@ -109,56 +113,61 @@ namespace W2Open.Server
                                     }
 
                                     // Process all possible packets that were possibly sent together.
-                                    while (packet.Offset < readCount && player.State != EPlayerState.CLOSED)
+                                    while (packet.Offset < readCount && playerConn.State != CPlayerConnection.EState.CLOSED)
                                     {
+                                        BPacketHeader header = packet.Header;
+
                                         // Check if the game packet size is bigger than the remaining received chunk.
-                                        if (packet.ReadNextUShort(0) > readCount - packet.Offset || packet.ReadNextUShort(0) < 12)
-                                            throw new Exception("Invalid received packet. Reading packet is bigger than the remaining chunk.");
+                                        if (header.Size > readCount - packet.Offset || header.Size < 12)
+                                            throw new Exception("Invalid received packet. Reading packet is bigger than the remaining data chunk.");
 
                                         // Tries to decrypt the packet.
-                                        if (!PacketSecurity.Decrypt(packet))
+                                        if (!W2PacketSecurity.Decrypt(packet))
                                             throw new Exception($"Can't decrypt a packet received from {client.Client.RemoteEndPoint}.");
 
-                                        W2Log.Write(String.Format("Processing recv packet {{0x{0:X}/{1}}} from {2}.",
-                                            packet.ReadNextUShort(4), packet.ReadNextUShort(0), client.Client.RemoteEndPoint), ELogType.NETWORK);
+                                        // Updates the newly decrypted header.
+                                        header = packet.Header;
 
                                         // Process the incoming packet.
-                                        EPlayerRequestResult requestResult = gameController.ProcessPlayerRequest(player);
+                                        EPlayerRequestResult requestResult = gameController.ProcessPlayerRequest(playerConn);
+                                        
+                                        /* Dump received packet */
+                                        byte[] rawPacket = new byte[header.Size];
+                                        for (int i = 0; i < rawPacket.Length; i++)
+                                            rawPacket[i] = PinnedPacketChunk[i + packet.Offset];
 
-                                        // Treat the processing packet return.
+                                        File.WriteAllBytes(String.Format(@"Dumped Packets\Recv\{0:X}.bin", header.Opcode),
+                                            rawPacket);
+                                        // -----
+
+                                        // Treat the packet processing result.
                                         switch (requestResult)
                                         {
                                             case EPlayerRequestResult.PACKET_NOT_HANDLED:
                                             {
-                                                W2Log.Write(String.Format("Recv packet {{0x{0:X}/{1}}} from {2} didn't was processed.",
-                                                    packet.ReadNextUShort(4), packet.ReadNextUShort(0), client.Client.RemoteEndPoint), ELogType.NETWORK);
-
-                                                byte[] rawPacket = new byte[packet.ReadNextUShort(0)];
-                                                for (int i = 0; i < rawPacket.Length; i++)
-                                                    rawPacket[i] = PinnedPacketChunk[i + packet.Offset];
-
-                                                File.WriteAllBytes($@"..\..\Dumped Packets\Inner Packets\{packet.ReadNextUShort(4)}.bin",
-                                                    rawPacket);
+                                                W2Log.Write(String.Format("Recv packet ({0}) was not handled.",
+                                                    gameController.Statistics.ReceivedPackets), ELogType.NETWORK);
                                                 break;
                                             }
 
                                             case EPlayerRequestResult.CHECKSUM_FAIL:
                                             {
-                                                W2Log.Write($"Recv packet from {client.Client.RemoteEndPoint} have invalid checksum.", ELogType.CRITICAL_ERROR);
-                                                gameController.DisconnectPlayer(player);
+                                                W2Log.Write($"Recv packet ({gameController.Statistics.ReceivedPackets}) have invalid checksum.",
+                                                    ELogType.CRITICAL_ERROR);
+                                                gameController.DisconnectPlayer(playerConn);
                                                 break;
                                             }
 
                                             case EPlayerRequestResult.PLAYER_INCONSISTENT_STATE:
                                             {
-                                                W2Log.Write($"A player was disconnected due to inconsistent PlayerState.", ELogType.CRITICAL_ERROR);
-                                                gameController.DisconnectPlayer(player);
+                                                W2Log.Write($"Connection ({playerConn.Index}) dropped due to inconsistent {nameof(CPlayerConnection.EState)}.", ELogType.CRITICAL_ERROR);
+                                                gameController.DisconnectPlayer(playerConn);
                                                 break;
                                             }
                                         }
 
                                         // Correct the offset to process the next packet in the received chunk.
-                                        player.RecvPacket.Offset += packet.ReadNextUShort(0);
+                                        playerConn.RecvPacket.Offset += header.Size;
                                     }
                                 }
                             }
@@ -167,11 +176,11 @@ namespace W2Open.Server
                 }
                 catch (Exception ex)
                 {
-                    W2Log.Write($"An unhandled exception happened processing the player {player.Index}. MSG: {ex.Message}", ELogType.CRITICAL_ERROR);
+                    W2Log.Write($"An unhandled exception happened processing the player {playerConn.Index}. MSG: {ex.Message}", ELogType.CRITICAL_ERROR);
                 }
                 finally
                 {
-                    gameController.DisconnectPlayer(player);
+                    gameController.DisconnectPlayer(playerConn);
                 }
             }
         }
@@ -192,8 +201,6 @@ namespace W2Open.Server
                 while(true)
                 {
                     TcpClient thisClient = await listener.AcceptTcpClientAsync();
-
-                    W2Log.Write($"New client connected {thisClient.Client.RemoteEndPoint}.", ELogType.NETWORK);
 
                     ProcessClient_Channel1(thisClient);
                 }

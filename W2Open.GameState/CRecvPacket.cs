@@ -1,11 +1,13 @@
-﻿namespace W2Open.Common
+﻿using W2Open.Common.Game.v752;
+
+namespace W2Open.Common
 {
     /// <summary>
     /// The implementation of a compounded raw byte buffer.
     /// This object encapsulates the process of reading and writing to a byte buffer when this activity is will be done many times.
     /// After instantiating a CCoumpoundBuffer, you read or write in the byte buffer via the Read/Write methods.
     /// </summary>
-    public class CCompoundBuffer
+    public class CRecvPacket
     {
         /// <summary>
         /// The raw packet buffer.
@@ -34,16 +36,35 @@
             }
         }
 
-        public CCompoundBuffer(byte[] rawBuffer, int initialOffset = 0)
+        public CRecvPacket(byte[] rawBuffer, int initialOffset = 0)
         {
             RawBuffer = rawBuffer;
             Offset = initialOffset;
         }
 
-        public CCompoundBuffer(int bufferLength, int initialOffset = 0)
+        public CRecvPacket(int bufferLength, int initialOffset = 0)
         {
             RawBuffer = new byte[bufferLength];
             Offset = initialOffset;
+        }
+
+        public unsafe BPacketHeader Header
+        {
+            get
+            {
+                fixed(byte* b = &RawBuffer[Offset])
+                {
+                    return *(BPacketHeader*)b;
+                }
+            }
+
+            set
+            {
+                fixed (byte* b = &RawBuffer[Offset])
+                {
+                    *(BPacketHeader*)b = value;
+                }
+            }
         }
     }
 }
