@@ -2,21 +2,20 @@
 using System.Runtime.InteropServices;
 using W2Open.Common;
 using W2Open.Common.Game;
-using W2Open.Common.Game.v752;
 
-namespace W2Open.DataServer
+namespace W2Open.Common.Game.v747
 {
-    [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
+    [StructLayout(LayoutKind.Sequential, Pack = W2Basics.DEFAULT_MEM_PACK)]
     public struct UPlayerAccount
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = W2Basics.MAXL_LOGIN)]
-        public String Login;
+        public string Login;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = W2Basics.MAXL_PASSWORD)]
-        public String Password;
+        public string Password;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = W2Basics.MAXC_MOB_PER_ACCOUNT)]
-        public UMob[] Mobs;
+        public UMobBase[] Character;
 
         public UCargo Cargo;
     }

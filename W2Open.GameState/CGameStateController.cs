@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Timers;
 using W2Open.Common;
-using W2Open.Common.Game.v752;
+using W2Open.Common.Game.v747;
 using W2Open.Common.Utility;
-using W2Open.DataServer;
 
 namespace W2Open.GameState
 {
@@ -42,7 +40,7 @@ namespace W2Open.GameState
             m_Timer.Start();
         }
 
-        public delegate EPlayerRequestResult DProcessPacket(CGameStateController gs, CPlayerConnection player);
+        public delegate EPlayerRequestResult DProcessPacket(CPlayerConnection player);
         public delegate void DProcessSecTimer(CGameStateController gs);
 
         public static event DProcessPacket OnProcessPacket;
@@ -108,12 +106,12 @@ namespace W2Open.GameState
 
             BPacketHeader header = player.RecvPacket.Header;
 
-            W2Log.Write(String.Format("New recv packet ({3}) from connection {2} {{0x{0:X}/{1}}}.",
+            W2Log.Write(string.Format("New recv packet ({3}) from connection {2} {{0x{0:X}/{1}}}.",
                 header.Opcode, header.Size, player.Index, Statistics.ReceivedPackets), ELogType.NETWORK);
 
             foreach (DProcessPacket target in OnProcessPacket.GetInvocationList())
             {
-                result = target(this, player);
+                result = target(player);
 
                 if (result != EPlayerRequestResult.NO_ERROR && result != EPlayerRequestResult.PACKET_NOT_HANDLED)
                 {

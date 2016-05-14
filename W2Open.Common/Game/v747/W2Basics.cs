@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace W2Open.Common.Game.v752
+﻿namespace W2Open.Common.Game.v747
 {
     public static class W2Basics
     {
@@ -21,8 +15,17 @@ namespace W2Open.Common.Game.v752
         public const int MAXL_MOB_NAME = 16;
         public const int MAXC_MOB_EQUIP = 16;
         public const int MAXC_MOB_INVENTORY = 64;
+        public const int MAXC_MOB_AFFECT = 16;
         #endregion
 
         public const int MAXC_ITEM_EFFECT = 3;
+
+        /// <summary>
+        /// Memory pack layout used to correctly Marshals the raw data into structures.
+        /// This is the memory pack alignment used in the game's client, so we have to respect that.
+        /// </summary>
+        public const int DEFAULT_MEM_PACK = 8;
+
+        public const int SYSTEM_CLIENTID = 0;
     }
 }

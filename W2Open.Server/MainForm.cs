@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using W2Open.Common;
-using W2Open.Common.Game.v752;
-using W2Open.Common.Game.v752.Packets;
+using W2Open.Common.Game.v747;
+using W2Open.Common.Game.v747.Packets;
 using W2Open.Common.Utility;
 using W2Open.GameState;
 using W2Open.GameState.Plugin;
@@ -30,7 +30,7 @@ namespace W2Open.Server
             StartServer_Channel1();
         }
 
-        private void CLog_DidLog(String txt, ELogType logType)
+        private void CLog_DidLog(string txt, ELogType logType)
         {
             Color logColor;
 
@@ -54,7 +54,7 @@ namespace W2Open.Server
             }
 
             rtbMainLog.SelectionColor = Color.Yellow;
-            rtbMainLog.AppendText(String.Format("[{0:D02}:{1:D02}:{2:D02}] ", DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second));
+            rtbMainLog.AppendText(string.Format("[{0:D02}:{1:D02}:{2:D02}] ", DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second));
 
             rtbMainLog.SelectionColor = logColor;
             rtbMainLog.AppendText(txt + "\n");
@@ -97,12 +97,10 @@ namespace W2Open.Server
                                     {
                                         packet.Offset = 4;
 
-                                        playerConn.SendPacket(new UGameNoticePacket("tu e fera."));
-
                                         // If a valid index can't be assigned to the player, disconnect him 
                                         if (!gameController.TryInsertPlayerConnection(playerConn))
                                         {
-                                            playerConn.SendPacket(new UGameNoticePacket("O servidor está lotado.Tente novamente mais tarde."));
+                                            playerConn.SendPacket(new UPacket_0x101("O servidor está lotado.Tente novamente mais tarde."));
                                             gameController.DisconnectPlayer(playerConn);
                                             continue;
                                         }
@@ -136,7 +134,7 @@ namespace W2Open.Server
                                         for (int i = 0; i < rawPacket.Length; i++)
                                             rawPacket[i] = PinnedPacketChunk[i + packet.Offset];
 
-                                        File.WriteAllBytes(String.Format(@"Dumped Packets\Recv\{0:X}.bin", header.Opcode),
+                                        File.WriteAllBytes(string.Format(@"Dumped Packets\Recv\{0:X}.bin", header.Opcode),
                                             rawPacket);
                                         // -----
 
@@ -145,7 +143,7 @@ namespace W2Open.Server
                                         {
                                             case EPlayerRequestResult.PACKET_NOT_HANDLED:
                                             {
-                                                W2Log.Write(String.Format("Recv packet ({0}) was not handled.",
+                                                W2Log.Write(string.Format("Recv packet ({0}) was not handled.",
                                                     gameController.Statistics.ReceivedPackets), ELogType.NETWORK);
                                                 break;
                                             }

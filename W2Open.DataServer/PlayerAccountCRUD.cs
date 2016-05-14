@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using W2Open.Common;
+using W2Open.Common.Game.v747;
 using W2Open.Common.Utility;
 
 namespace W2Open.DataServer
@@ -39,14 +39,14 @@ namespace W2Open.DataServer
             return result;
         }
 
-        public static EResult TryRead(String login, String psw, out UPlayerAccount accFile)
+        public static EResult TryReadAccount(string login, string psw, out UPlayerAccount accFile)
         {
             EResult result = EResult.NO_ERROR;
             accFile = new UPlayerAccount();
 
             try
             {
-                byte[] rawAcc = File.ReadAllBytes(String.Format("{0}/{1}/{2}.bin",
+                byte[] rawAcc = File.ReadAllBytes(string.Format("{0}/{1}/{2}.bin",
                        PersistencyBasics.DB_ROOT_PATH, login.Substring(0, 1).ToUpper(), login.ToUpper()));
 
                 accFile = W2Marshal.GetStructure<UPlayerAccount>(rawAcc);
@@ -66,7 +66,7 @@ namespace W2Open.DataServer
 
             try
             {
-                File.WriteAllBytes(String.Format("{0}/{1}/{2}.bin",
+                File.WriteAllBytes(string.Format("{0}/{1}/{2}.bin",
                         PersistencyBasics.DB_ROOT_PATH, acc.Login.Substring(0, 1).ToUpper(),
                         acc.Login.ToUpper()), accBuffer);
             }

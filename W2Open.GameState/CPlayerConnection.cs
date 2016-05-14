@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Sockets;
 using W2Open.Common;
 using W2Open.Common.Utility;
 
@@ -17,7 +12,7 @@ namespace W2Open.GameState
         public TcpClient Tcp { get; private set; }
         public CRecvPacket RecvPacket { get; private set; }
 
-        private CGameStateController m_GameState;
+        public CGameStateController GameState;
 
         public CPlayerConnection(CGameStateController gameState, TcpClient tcpClient)
         {
@@ -25,7 +20,7 @@ namespace W2Open.GameState
             Tcp = tcpClient;
             State = EState.WAITING_TO_LOGIN;
             RecvPacket = new CRecvPacket(NetworkBasics.MAXL_PACKET);
-            m_GameState = gameState;
+            GameState = gameState;
         }
 
         /// <summary>
@@ -58,7 +53,7 @@ namespace W2Open.GameState
         {
             NetworkStream stream = Tcp.GetStream();
 
-            m_GameState.Statistics.SendedPackets++;
+            GameState.Statistics.SendedPackets++;
 
             if (stream.CanWrite)
             {

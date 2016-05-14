@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using W2Open.Common.Utility;
-
-namespace W2Open.GameState.Plugin.DefaultTickCountHandler
+﻿namespace W2Open.GameState.Plugin.DefaultTickCountHandler
 {
     public class dummy : IGameStatePlugin
     {

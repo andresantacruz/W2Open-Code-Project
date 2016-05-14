@@ -1,29 +1,26 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace W2Open.Common.Game.v752
+namespace W2Open.Common.Game.v747
 {
     /// <summary>
     /// Represents a set of information regard to a mob's status.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct BMobScore
+    [StructLayout(LayoutKind.Sequential, Pack = W2Basics.DEFAULT_MEM_PACK)]
+    public struct BMobStatus
     {
-        public int Level;
+        public ushort Level;
 
-        public int Defense;
-        public int Damage;
+        public short Defense;
+        public short Attack;
 
-        public byte Merchant; // TODO: unknown type!
-
+        public byte Merchant;
         private byte m_MovementSpeed;
 
-        public byte Direction; // The direction the mob is facing.
-        public byte ChaosRate; // TODO: unknown type!
+        public short MaxHP;
+        public short MaxMP;
 
-        public int MaxHp;
-        public int MaxMp;
-        public int CurrHp;
-        public int CurrMp;
+        public short CurrentHP;
+        public short CurrentMP;
 
         public short Str;
         public short Int;

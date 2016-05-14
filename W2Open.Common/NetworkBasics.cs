@@ -19,7 +19,5 @@
         /// Max simultaneous connected amount of players.
         /// </summary>
         public const int MAX_PLAYER = 500;
-
-        public const int SYSTEM_CLIENTID = 0;
     }
 }

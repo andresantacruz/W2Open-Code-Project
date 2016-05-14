@@ -43,21 +43,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\ItemCollections.cs" />
-    <Compile Include="Game\v752\BAffect.cs" />
-    <Compile Include="Game\v752\BPosition.cs" />
-    <Compile Include="Game\v752\Packets\UGameNoticePacket.cs" />
-    <Compile Include="Game\v752\Packets\ULoginRequestPacket.cs" />
-    <Compile Include="Game\v752\W2Basics.cs" />
-    <Compile Include="Game\v752\UItem.cs" />
-    <Compile Include="Game\UMobComplete.cs" />
-    <Compile Include="Game\v752\BPacketHeader.cs" />
-    <Compile Include="Game\v752\BMobScore.cs" />
+    <Compile Include="Game\v747\Packets\UPacket_0x10E.cs" />
+    <Compile Include="Game\v747\UCargo.cs" />
+    <Compile Include="Game\v747\UCharList.cs" />
+    <Compile Include="Game\v747\UEquip.cs" />
+    <Compile Include="Game\v747\BAffect.cs" />
+    <Compile Include="Game\v747\BPosition.cs" />
+    <Compile Include="Game\v747\Packets\UPacket_0x101.cs" />
+    <Compile Include="Game\v747\Packets\UPacket_0x20D.cs" />
+    <Compile Include="Game\v747\UInventory.cs" />
+    <Compile Include="Game\v747\UPlayerAccount.cs" />
+    <Compile Include="Game\v747\W2Basics.cs" />
+    <Compile Include="Game\v747\UItem.cs" />
+    <Compile Include="Game\v747\BPacketHeader.cs" />
+    <Compile Include="Game\v747\BMobStatus.cs" />
     <Compile Include="NetworkBasics.cs" />
     <Compile Include="ProjectBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\v752\UMobBase.cs" />
-    <Compile Include="Game\v752\UMobExtra.cs" />
+    <Compile Include="Game\v747\UMobBase.cs" />
     <Compile Include="Utility\W2GenericExt.cs" />
     <Compile Include="Utility\W2Log.cs" />
     <Compile Include="Utility\W2Marshal.cs" />

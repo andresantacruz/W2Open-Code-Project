@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
-using W2Open.Common;
-using W2Open.Common.Utility;
+﻿using W2Open.Common.Game.v747;
 using W2Open.DataServer;
 
 namespace W2Open.GameState

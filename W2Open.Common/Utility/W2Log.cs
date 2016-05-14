@@ -26,14 +26,14 @@ namespace W2Open.Common.Utility
         /// <summary>
         /// Fired when someone writes any log.
         /// </summary>
-        public static event Action<String, ELogType> DidLog;
+        public static event Action<string, ELogType> DidLog;
 
         /// <summary>
         /// Logs a text.
         /// </summary>
         /// <param name="txt">Text to be logged</param>
         /// <param name="logType">Type of the log.</param>
-        public static void Write(String txt, ELogType logType)
+        public static void Write(string txt, ELogType logType)
         {
             // TODO: log the text in the hard disk file.
 

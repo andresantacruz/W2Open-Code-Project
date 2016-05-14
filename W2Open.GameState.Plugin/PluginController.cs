@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using W2Open.GameState.Plugin.DefaultPlayerRequestHandler;
-using W2Open.GameState.Plugin.DefaultTickCountHandler;
 
 namespace W2Open.GameState.Plugin
 {
@@ -21,15 +19,15 @@ namespace W2Open.GameState.Plugin
         /// </summary>
         public static void InstallPlugins()
         {
-            String pluginInterfaceName = typeof(IGameStatePlugin).Name;
+            string pluginInterfaceName = typeof(IGameStatePlugin).Name;
             
             IEnumerable<Type> pluginTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(IGameStatePlugin).IsAssignableFrom(t) && t.Name != pluginInterfaceName);
 
             Queue<IGameStatePlugin> defaultPlugins = new Queue<IGameStatePlugin>();
             Queue<IGameStatePlugin> otherPlugins = new Queue<IGameStatePlugin>();
 
-            String defaultPlayerRequestPluginNS = nameof(W2Open.GameState.Plugin.DefaultPlayerRequestHandler);
-            String defaultTickCountPluginNS = nameof(W2Open.GameState.Plugin.DefaultTickCountHandler);
+            string defaultPlayerRequestPluginNS = nameof(W2Open.GameState.Plugin.DefaultPlayerRequestHandler);
+            string defaultTickCountPluginNS = nameof(W2Open.GameState.Plugin.DefaultTickCountHandler);
 
             // Read all types in this assembly and enqueue them into default or other plugin queues.
             foreach (Type thisPlugin in pluginTypes)

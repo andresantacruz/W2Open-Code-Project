@@ -1,4 +1,4 @@
-﻿using W2Open.Common.Game.v752;
+﻿using W2Open.Common.Game.v747;
 
 namespace W2Open.Common.Utility
 {
