@@ -49,7 +49,7 @@ namespace W2Open.DataServer
                 byte[] rawAcc = File.ReadAllBytes(string.Format("{0}/{1}/{2}.bin",
                        PersistencyBasics.DB_ROOT_PATH, login.Substring(0, 1).ToUpper(), login.ToUpper()));
 
-                accFile = W2Marshal.GetStructure<UPlayerAccount>(rawAcc);
+                W2Marshal.GetStructure(rawAcc, 0, out accFile);
             }
             catch (Exception e)
             {

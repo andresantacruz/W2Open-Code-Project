@@ -6,7 +6,7 @@ namespace W2Open.GameState
 {
     public class CPlayerConnection
     {
-        public short Index { get; set; }
+        public ushort Index { get; set; }
         public EState State { get; set; }
 
         public TcpClient Tcp { get; private set; }
@@ -16,7 +16,7 @@ namespace W2Open.GameState
 
         public CPlayerConnection(CGameStateController gameState, TcpClient tcpClient)
         {
-            Index = -1;
+            Index = 0;
             Tcp = tcpClient;
             State = EState.WAITING_TO_LOGIN;
             RecvPacket = new CRecvPacket(NetworkBasics.MAXL_PACKET);

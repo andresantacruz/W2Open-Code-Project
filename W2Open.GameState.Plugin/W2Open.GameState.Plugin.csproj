@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultPlayerRequestHandler\CharacterManagement.cs" />
     <Compile Include="DefaultPlayerRequestHandler\PlayerLogin.cs" />
     <Compile Include="DefaultTickCountHandler\dummy.cs" />
     <Compile Include="IGameStatePlugin.cs" />

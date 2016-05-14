@@ -37,7 +37,7 @@ namespace W2Open.Common.Game.v747
 
         public ushort GuildIndex;
 
-        public byte ClassType;
+        public EMobClass ClassType;
         public byte QuestIndex;
 
         public short CityZone;

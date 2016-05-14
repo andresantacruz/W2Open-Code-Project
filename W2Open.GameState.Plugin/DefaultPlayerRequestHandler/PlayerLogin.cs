@@ -20,10 +20,12 @@ namespace W2Open.GameState.Plugin.DefaultPlayerRequestHandler
             {
                 case UPacket_0x20D.Opcode:
                 {
-                    UPacket_0x20D packet = W2Marshal.GetStructure<UPacket_0x20D>(playerConn.RecvPacket.RawBuffer);
+                    UPacket_0x20D packet;
                     UPlayerAccount playerAcc;
-                    
-                    switch(PlayerAccountCRUD.TryReadAccount(packet.Login, packet.Password, out playerAcc))
+
+                    playerConn.RecvPacket.GetPacketStructure(out packet);
+
+                    switch (PlayerAccountCRUD.TryReadAccount(packet.Login, packet.Password, out playerAcc))
                     {
                         case PlayerAccountCRUD.EResult.NO_ERROR:
                         {
@@ -31,8 +33,7 @@ namespace W2Open.GameState.Plugin.DefaultPlayerRequestHandler
 
                             gs.Players[playerConn.Index] = newPlayer;
 
-                            playerConn.SendPacket(new UPacket_0x101("Logando..."));
-                            W2Log.Write($"logando...{gs.Statistics.ReceivedPackets}", ELogType.NETWORK);
+                            playerConn.SendPacket(new UPacket_0x10E(playerConn.Index, playerAcc));
 
                             break;
                         }

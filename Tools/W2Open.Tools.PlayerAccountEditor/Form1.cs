@@ -15,7 +15,9 @@ namespace W2Open.Tools.PlayerAccountEditor
 
         private void btnCreateEmptyAccount_Click(object sender, EventArgs e)
         {
-            UPlayerAccount playerAcc = W2Marshal.CreateZeroInitialized<UPlayerAccount>();
+            UPlayerAccount playerAcc;
+
+            W2Marshal.CreateZeroInitialized(out playerAcc);
 
             playerAcc.Login = txtLogin.Text;
             playerAcc.Password = txtPsw.Text;

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\v747\Packets\UPacket_0x10E.cs" />
+    <Compile Include="Game\v747\Packets\UPacket_0x20F.cs" />
     <Compile Include="Game\v747\UCargo.cs" />
     <Compile Include="Game\v747\UCharList.cs" />
     <Compile Include="Game\v747\UEquip.cs" />

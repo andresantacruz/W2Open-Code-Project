@@ -40,7 +40,7 @@ namespace W2Open.GameState
             m_Timer.Start();
         }
 
-        public delegate EPlayerRequestResult DProcessPacket(CPlayerConnection player);
+        public delegate EPlayerRequestResult DProcessPacket(CPlayerConnection playerConn);
         public delegate void DProcessSecTimer(CGameStateController gs);
 
         public static event DProcessPacket OnProcessPacket;
@@ -53,7 +53,7 @@ namespace W2Open.GameState
         {
             Statistics.StablishedConnections++;
 
-            short i;
+            ushort i;
             for (i = 1; i < NetworkBasics.MAX_PLAYER; i++)
             {
                 if (PlayerConnections[i] == null || PlayerConnections[i].State == CPlayerConnection.EState.CLOSED)

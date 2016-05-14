@@ -5,11 +5,11 @@ namespace W2Open.Common.Utility
 {
     public static class W2Marshal
     {
-        public static unsafe T GetStructure<T>(byte[] buffer) where T : struct
+        public static unsafe void GetStructure<T>(byte[] buffer, int offset, out T obj) where T : struct
         {
-            fixed (byte* b = buffer)
+            fixed (byte* b = &buffer[offset])
             {
-                return Marshal.PtrToStructure<T>(new IntPtr(b));
+                obj = Marshal.PtrToStructure<T>(new IntPtr(b));
             }
         }
 
@@ -19,20 +19,20 @@ namespace W2Open.Common.Utility
 
             fixed (byte* b = buffer)
             {
-                Marshal.StructureToPtr<T>(obj, new IntPtr(b), false);
+                Marshal.StructureToPtr(obj, new IntPtr(b), false);
 
                 return buffer;
             }
         }
 
-        public static T CreateZeroInitialized<T>() where T : struct
+        public static void CreateZeroInitialized<T>(out T obj) where T : struct
         {
             byte[] buffer = new byte[Marshal.SizeOf(typeof(T))];
 
             for (int i = 0; i < buffer.Length; i++)
                 buffer[i] = 0;
 
-            return GetStructure<T>(buffer);
+            GetStructure(buffer, 0, out obj);
         }
     }
 }

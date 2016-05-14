@@ -11,8 +11,10 @@ namespace W2Open.Common.Game.v747.Packets
     /// Send the first selchar after login.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class UPacket_0x10E
+    public struct UPacket_0x10E
     {
+        public const int Opcode = 0x10E;
+
         public BPacketHeader Header;
 
         public UCharList CharList;
@@ -25,8 +27,10 @@ namespace W2Open.Common.Game.v747.Packets
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public byte[] Unknow_1816;
 
-        public UPacket_0x10E(UPlayerAccount acc)
+        public UPacket_0x10E(ushort playerId, UPlayerAccount acc)
         {
+            Header = new BPacketHeader(Opcode, playerId, Marshal.SizeOf<UPacket_0x10E>());
+
             CharList = new UCharList(acc);
 
             Cargo = acc.Cargo;

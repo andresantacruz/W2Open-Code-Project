@@ -1,4 +1,5 @@
 ﻿using W2Open.Common.Game.v747;
+using W2Open.Common.Utility;
 
 namespace W2Open.Common
 {
@@ -65,6 +66,11 @@ namespace W2Open.Common
                     *(BPacketHeader*)b = value;
                 }
             }
+        }
+
+        public unsafe void GetPacketStructure<T>(out T obj) where T : struct
+        {
+            W2Marshal.GetStructure<T>(RawBuffer, Offset, out obj);
         }
     }
 }
